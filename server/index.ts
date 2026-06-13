@@ -3,8 +3,8 @@ import { createHash, randomBytes } from "node:crypto";
 import express, { type NextFunction, type Request, type Response } from "express";
 import { createClient } from "@supabase/supabase-js";
 import type { PoolClient } from "pg";
-import { createPool } from "../scripts/db";
-import { boolEnv, intEnv, requiredEnv } from "../scripts/env";
+import { createPool } from "../scripts/db.js";
+import { boolEnv, intEnv, requiredEnv } from "../scripts/env.js";
 
 type UserRole = "student" | "librarian" | "admin";
 

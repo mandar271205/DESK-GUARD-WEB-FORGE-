@@ -1,5 +1,5 @@
 import pg from "pg";
-import { requiredEnv } from "./env";
+import { requiredEnv } from "./env.js";
 
 const { Pool } = pg;
 
