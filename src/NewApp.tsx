@@ -27,7 +27,7 @@ function ProtectedRoute({ children, staffOnly = false }: { children: React.React
     </div>
   );
   
-  if (!state) return <Navigate to="/login" replace />;
+  if (!state) return <Navigate to="/auth" replace />;
   if (staffOnly && !isStaff) return <Navigate to="/app" replace />;
   
   return <>{children}</>;
@@ -39,7 +39,7 @@ function GlobalAppRouter() {
   return (
     <Routes>
       <Route path="/" element={<LandingPage />} />
-      <Route path="/login" element={<AuthScreen />} />
+      <Route path="/auth" element={<AuthScreen />} />
       <Route path="/reset-password" element={<ResetPasswordScreen />} />
       <Route path="/claim" element={<ClaimPage />} />
       <Route path="/display/:displayPublicId" element={<PublicDisplayPage />} />
