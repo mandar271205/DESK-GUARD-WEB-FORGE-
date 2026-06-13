@@ -12,8 +12,8 @@ export function FloorMapSvg({
   onSelect: (id: string) => void;
 }) {
   return (
-    <div className="overflow-hidden rounded-lg bg-slate-50/50">
-      <svg viewBox="0 0 100 100" role="img" aria-label="Library floor map" className="aspect-[4/3] w-full">
+    <div className="overflow-hidden rounded-lg bg-slate-50/50 w-full h-full flex items-center justify-center">
+      <svg viewBox="0 0 100 100" role="img" aria-label="Library floor map" className="aspect-[4/3] w-full h-full max-h-full">
         <rect x="0" y="0" width="100" height="100" fill="transparent" />
         <path d="M4 8h92v84H4z" fill="none" stroke="#e2e8f0" strokeWidth="0.7" />
         <path d="M50 8v84M4 50h92" stroke="#f1f5f9" strokeWidth="0.6" />
