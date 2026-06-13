@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { DoorOpen, Home, KeyRound, Mail, QrCode, ShieldCheck, Clock3, Wifi, UserPlus, Loader2 } from "lucide-react";
+import { DoorOpen, Home, Eye, EyeOff, Mail, QrCode, ShieldCheck, Clock3, Wifi, UserPlus, Loader2, Map, BookOpen } from "lucide-react";
 import { supabase } from "../supabaseClient";
 import { getPublicAppUrl } from "../lib/app-url";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
 function mapAuthError(message: string): string {
@@ -91,26 +91,43 @@ export function AuthScreen() {
     else setMessage("Password reset email sent.");
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && !busy) void submit();
+  };
+
   return (
     <div className="grid min-h-screen place-items-center bg-slate-50 px-4 py-8">
       <div className="grid w-full max-w-5xl overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl lg:grid-cols-[1fr_1fr]">
         <section className="bg-indigo-950 p-8 text-white relative overflow-hidden flex flex-col justify-between">
-          <div className="absolute inset-0 opacity-10 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-indigo-300 via-transparent to-transparent"></div>
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(99,102,241,0.2),transparent_70%)]"></div>
           
           <div className="relative z-10">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => navigate("/")}
-              className="mb-8 border-white/20 bg-white/10 text-white hover:bg-white/20 hover:text-white"
-            >
-              <Home className="h-4 w-4 mr-2" />
-              Home
-            </Button>
-            <h1 className="text-4xl font-bold tracking-tight mb-4 text-white">Secure library access</h1>
-            <p className="text-base leading-7 text-indigo-200/80">
-              Public signup creates student accounts only. Librarian access is granted later by a database administrator to maintain high security.
+            <div className="flex items-center gap-2.5 mb-10">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/10">
+                <BookOpen className="h-4 w-4 text-white" />
+              </div>
+              <span className="text-lg font-bold text-white">DeskGuard</span>
+            </div>
+            <h1 className="text-3xl font-bold tracking-tight mb-3 text-white leading-tight">Your smart library<br />access portal.</h1>
+            <p className="text-sm leading-relaxed text-indigo-200/70">
+              Public signup creates student accounts. Librarian access requires admin approval for security.
             </p>
+            <div className="mt-8 flex flex-col gap-2.5">
+              <button
+                onClick={() => navigate("/app/map")}
+                className="flex items-center gap-2 text-sm text-indigo-300 hover:text-white transition-colors"
+              >
+                <Map className="h-4 w-4" />
+                View live map without signing in
+              </button>
+              <button
+                onClick={() => navigate("/")}
+                className="flex items-center gap-2 text-sm text-indigo-300 hover:text-white transition-colors"
+              >
+                <Home className="h-4 w-4" />
+                Back to home
+              </button>
+            </div>
           </div>
 
           <div className="relative z-10 mt-12 grid gap-4 sm:grid-cols-2">
@@ -146,8 +163,16 @@ export function AuthScreen() {
         </section>
 
         <section className="p-8 lg:p-12 flex flex-col justify-center">
+          <div className="mb-7">
+            <h2 className="text-xl font-bold text-slate-900">
+              {mode === "signin" ? "Welcome back" : "Create your account"}
+            </h2>
+            <p className="text-sm text-slate-500 mt-1">
+              {mode === "signin" ? "Sign in to manage your desk session." : "Get started with DeskGuard for free."}
+            </p>
+          </div>
           <Tabs defaultValue="signin" onValueChange={(v) => setMode(v as "signin" | "signup")} className="w-full">
-            <TabsList className="grid w-full grid-cols-2 mb-8">
+            <TabsList className="grid w-full grid-cols-2 mb-6">
               <TabsTrigger value="signin">Sign In</TabsTrigger>
               <TabsTrigger value="signup">Create Account</TabsTrigger>
             </TabsList>
@@ -173,17 +198,18 @@ export function AuthScreen() {
                     type={showPassword ? "text" : "password"}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    autoComplete="current-password"
+                    onKeyDown={handleKeyDown}
+                    autoComplete={mode === "signin" ? "current-password" : "new-password"}
+                    className="pr-10"
                   />
-                  <Button
+                  <button
                     type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="absolute right-0 top-0 h-full px-3 text-slate-500 hover:text-slate-700"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
                     onClick={() => setShowPassword(!showPassword)}
+                    aria-label={showPassword ? "Hide password" : "Show password"}
                   >
-                    <KeyRound className="h-4 w-4" />
-                  </Button>
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
                 </div>
               </div>
 

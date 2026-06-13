@@ -104,12 +104,25 @@ export function ClaimPage() {
 
   return (
     <div className="grid min-h-screen place-items-center bg-slate-50 px-4 py-8">
-      <Card className="w-full max-w-md shadow-lg border-slate-200">
-        <CardHeader>
-          <CardTitle className="text-2xl font-bold text-center">Claim Desk</CardTitle>
-          <CardDescription className="text-center">Secure authentication required.</CardDescription>
+      <Card className="w-full max-w-md shadow-xl border-slate-200 overflow-hidden">
+        {/* Brand header */}
+        <div className="bg-indigo-950 px-6 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-white/10">
+              <Armchair className="h-4 w-4 text-white" />
+            </div>
+            <span className="text-base font-bold text-white">DeskGuard</span>
+          </div>
+          <Badge className="bg-white/10 text-indigo-200 border-0 text-xs">
+            <div className="h-1.5 w-1.5 rounded-full bg-emerald-400 mr-1.5 animate-pulse" />
+            Live QR Claim
+          </Badge>
+        </div>
+        <CardHeader className="pb-2 pt-5">
+          <CardTitle className="text-xl font-bold text-center">Claim Your Seat</CardTitle>
+          <CardDescription className="text-center">QR code scanned and verified.</CardDescription>
         </CardHeader>
-        <CardContent className="space-y-6">
+        <CardContent className="space-y-5">
           {error && (
             <Alert variant="destructive">
               <AlertTriangle className="h-4 w-4" />
@@ -153,32 +166,34 @@ export function ClaimPage() {
           )}
 
           {preview?.desk && (
-            <div className="rounded-xl border border-slate-200 bg-white p-4 flex items-center justify-between">
+            <div className="rounded-xl border border-slate-200 bg-gradient-to-br from-slate-50 to-white p-4">
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-100 text-indigo-700">
-                  <Armchair className="h-5 w-5" />
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-100 text-indigo-700 flex-shrink-0">
+                  <Armchair className="h-6 w-6" />
                 </div>
-                <div>
-                  <p className="text-sm font-semibold text-slate-900">{preview.desk.label}</p>
-                  <p className="text-xs text-slate-500">Floor {preview.desk.floor} • {preview.desk.zone}</p>
+                <div className="flex-1 min-w-0">
+                  <p className="text-lg font-extrabold text-slate-900">{preview.desk.label}</p>
+                  <p className="text-sm text-slate-500">{preview.desk.zone} · Floor {preview.desk.floor}</p>
                 </div>
+                <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 border text-xs">
+                  Available
+                </Badge>
               </div>
-              <Badge variant="outline" className="border-indigo-200 bg-indigo-50 text-indigo-700">Available</Badge>
             </div>
           )}
         </CardContent>
-        <CardFooter className="flex flex-col gap-3">
+        <CardFooter className="flex flex-col gap-2 pt-2">
           <Button
-            className="w-full bg-indigo-600 hover:bg-indigo-700"
+            className="w-full h-11 bg-indigo-600 hover:bg-indigo-700 shadow-sm font-semibold"
             disabled={busy || preview?.status !== "valid"}
             onClick={claim}
           >
             {busy ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <CheckCircle2 className="mr-2 h-4 w-4" />}
             {busy ? "Claiming..." : "Confirm & Claim Desk"}
           </Button>
-          <Button variant="ghost" className="w-full" onClick={() => navigate("/app")}>
+          <Button variant="ghost" size="sm" className="w-full text-slate-500" onClick={() => navigate("/app/map")}>
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Dashboard
+            Back to Map
           </Button>
         </CardFooter>
       </Card>

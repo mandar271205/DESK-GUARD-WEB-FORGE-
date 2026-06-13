@@ -96,7 +96,27 @@ export function MapView() {
   }, [handleScannedClaim, scannerOpen]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5 page-fade-in">      
+      {/* Page Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <h1 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+            <span className="h-2 w-2 rounded-full bg-emerald-500 rt-pulse" />
+            Live Availability
+          </h1>
+          <p className="text-sm text-slate-500 mt-0.5">
+            {state.desks.filter(d => d.status === "free").length} of {state.desks.length} desks currently free
+          </p>
+        </div>
+        <div className="flex items-center gap-2 text-xs">
+          {["free","occupied","away","abandoned"].map(s => (
+            <div key={s} className="flex items-center gap-1 text-slate-600">
+              <div className={`h-2.5 w-2.5 rounded-full ${s==="free"?"bg-emerald-500":s==="occupied"?"bg-red-500":s==="away"?"bg-amber-400":"bg-orange-500"}`} />
+              <span className="capitalize hidden sm:block">{s}</span>
+            </div>
+          ))}
+        </div>
+      </div>
       {/* Search and Filters */}
       <Card className="shadow-sm border-slate-200">
         <CardContent className="p-4 sm:p-6">
@@ -169,15 +189,15 @@ export function MapView() {
         <Card className="shadow-sm border-slate-200 min-h-[500px] flex flex-col">
           <CardHeader className="flex flex-row items-center justify-between pb-2 border-b border-slate-100">
             <div>
-              <CardTitle className="text-lg">Live Floor Map</CardTitle>
-              <CardDescription>{filtered.length} desks visible</CardDescription>
+              <CardTitle className="text-base">Floor Map</CardTitle>
+              <CardDescription>{filtered.length} of {state.desks.length} desks shown</CardDescription>
             </div>
             {/* Status Legend */}
-            <div className="hidden sm:flex items-center gap-4 text-xs font-medium">
-              <div className="flex items-center gap-1.5"><div className="h-3 w-3 rounded-full bg-slate-200"></div>Free</div>
-              <div className="flex items-center gap-1.5"><div className="h-3 w-3 rounded-full bg-rose-500"></div>Occupied</div>
-              <div className="flex items-center gap-1.5"><div className="h-3 w-3 rounded-full bg-amber-400"></div>Away</div>
-              <div className="flex items-center gap-1.5"><div className="h-3 w-3 rounded-full bg-orange-500"></div>Abandoned</div>
+            <div className="hidden lg:flex items-center gap-4 text-xs font-medium text-slate-600">
+              <div className="flex items-center gap-1.5"><div className="h-2.5 w-2.5 rounded-full bg-emerald-500" />Free</div>
+              <div className="flex items-center gap-1.5"><div className="h-2.5 w-2.5 rounded-full bg-red-500" />Occupied</div>
+              <div className="flex items-center gap-1.5"><div className="h-2.5 w-2.5 rounded-full bg-amber-400" />Away</div>
+              <div className="flex items-center gap-1.5"><div className="h-2.5 w-2.5 rounded-full bg-orange-500" />Abandoned</div>
             </div>
           </CardHeader>
           <CardContent className="p-0 flex-1 flex flex-col items-center justify-center bg-slate-50 relative overflow-hidden">
