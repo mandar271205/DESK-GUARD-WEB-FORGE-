@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import { CheckCircle2, AlertTriangle, XCircle, ArrowLeft, Armchair, Loader2 } from "lucide-react";
 
 import { useGlobalState } from "../contexts/GlobalStateContext";
@@ -12,9 +12,11 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 
 export function ClaimPage() {
-  const { token } = useParams<{ token: string }>();
+  const [searchParams] = useSearchParams();
+  const token = searchParams.get("token") ?? undefined;
   const navigate = useNavigate();
   const { refreshState, runAction } = useGlobalState();
+
   
   const [preview, setPreview] = useState<ClaimPreview | null>(null);
   const [busy, setBusy] = useState(false);
