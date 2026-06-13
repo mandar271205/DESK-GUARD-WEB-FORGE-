@@ -1226,10 +1226,14 @@ app.use((error: unknown, _req: Request, res: Response, _next: NextFunction) => {
 });
 
 const port = intEnv("API_PORT", 8787);
-app.listen(port, () => {
-  console.log(`DeskGuard API listening on http://localhost:${port}`);
-  runCleanup("startup").catch((error) => console.error("Startup cleanup failed", error));
-  setInterval(() => {
-    runCleanup("interval").catch((error) => console.error("Cleanup sweep failed", error));
-  }, SWEEP_SECONDS * 1000);
-});
+if (process.env.NODE_ENV !== "production" && process.env.VERCEL !== "1") {
+  app.listen(port, () => {
+    console.log(`DeskGuard API listening on http://localhost:${port}`);
+    runCleanup("startup").catch((error) => console.error("Startup cleanup failed", error));
+    setInterval(() => {
+      runCleanup("interval").catch((error) => console.error("Cleanup sweep failed", error));
+    }, SWEEP_SECONDS * 1000);
+  });
+}
+
+export default app;
