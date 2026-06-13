@@ -42,16 +42,16 @@ const supabase = createClient(requiredEnv("SUPABASE_URL"), requiredEnv("SUPABASE
   }
 });
 
-const DEMO_MODE = boolEnv("DEMO_MODE", true);
-const SESSION_SECONDS = intEnv("DEMO_SESSION_SECONDS", DEMO_MODE ? 60 : 7200);
-const AWAY_SECONDS = intEnv("DEMO_AWAY_SECONDS", DEMO_MODE ? 20 : 1200);
-const SWEEP_SECONDS = intEnv("DEMO_SWEEP_SECONDS", DEMO_MODE ? 5 : 60);
-const ABANDONED_RELEASE_SECONDS = intEnv("DEMO_ABANDONED_RELEASE_SECONDS", DEMO_MODE ? 10 : 60);
-const WARNING_SECONDS = DEMO_MODE ? 15 : 300;
-const QR_ROTATION_SECONDS = intEnv("QR_ROTATION_SECONDS", 120);
-const QR_TOKEN_EXPIRY_SECONDS = intEnv("QR_TOKEN_EXPIRY_SECONDS", 120);
-const QR_TOKEN_GRACE_SECONDS = intEnv("QR_TOKEN_GRACE_SECONDS", 5);
-const QR_FALLBACK_MODE_ENABLED = boolEnv("QR_FALLBACK_MODE_ENABLED", false);
+let DEMO_MODE = boolEnv("DEMO_MODE", true);
+let SESSION_SECONDS = intEnv("DEMO_SESSION_SECONDS", DEMO_MODE ? 180 : 7200);
+let AWAY_SECONDS = intEnv("DEMO_AWAY_SECONDS", DEMO_MODE ? 30 : 1200);
+let SWEEP_SECONDS = intEnv("DEMO_SWEEP_SECONDS", DEMO_MODE ? 5 : 60);
+let ABANDONED_RELEASE_SECONDS = intEnv("DEMO_ABANDONED_RELEASE_SECONDS", DEMO_MODE ? 10 : 60);
+let WARNING_SECONDS = DEMO_MODE ? 30 : 300;
+let QR_ROTATION_SECONDS = intEnv("QR_ROTATION_SECONDS", 120);
+let QR_TOKEN_EXPIRY_SECONDS = intEnv("QR_TOKEN_EXPIRY_SECONDS", 120);
+let QR_TOKEN_GRACE_SECONDS = intEnv("QR_TOKEN_GRACE_SECONDS", 5);
+let QR_FALLBACK_MODE_ENABLED = boolEnv("QR_FALLBACK_MODE_ENABLED", false);
 const APP_BASE_URL = process.env.APP_BASE_URL || "http://localhost:5173";
 
 const asyncHandler =
@@ -782,6 +782,26 @@ app.post(
     requireStaff(authed);
     const cleanup = await runCleanup("manual");
     res.json({ cleanup, state: await buildState(authed.auth) });
+  })
+);
+
+app.post(
+  "/api/librarian/config",
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const authed = req as AuthedRequest;
+    requireStaff(authed);
+    
+    if (typeof req.body.demoMode === "boolean") {
+      DEMO_MODE = req.body.demoMode;
+      SESSION_SECONDS = DEMO_MODE ? 180 : 7200;
+      AWAY_SECONDS = DEMO_MODE ? 30 : 1200;
+      SWEEP_SECONDS = DEMO_MODE ? 5 : 60;
+      ABANDONED_RELEASE_SECONDS = DEMO_MODE ? 10 : 60;
+      WARNING_SECONDS = DEMO_MODE ? 30 : 300;
+    }
+
+    res.json({ state: await buildState(authed.auth) });
   })
 );
 
