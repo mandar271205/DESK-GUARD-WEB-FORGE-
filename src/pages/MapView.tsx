@@ -237,17 +237,19 @@ export function MapView() {
                 </div>
               </div>
 
-              {!isStaff && (
-                <div className="space-y-3 pt-4 border-t border-slate-100">
+              <div className="space-y-3 pt-4 border-t border-slate-100">
+                {isStaff && (
                   <Button
                     className="w-full bg-indigo-600 hover:bg-indigo-700 shadow-sm"
-                    disabled={!canGenerateDeskQr}
-                    onClick={() => navigate(`/display/${qrDisplayId}`)}
+                    disabled={!canGenerateDeskQr || !qrDisplayId}
+                    onClick={() => qrDisplayId && navigate(`/display/${qrDisplayId}`)}
                   >
                     <QrCode className="mr-2 h-4 w-4" />
                     {activeDesk ? "Active desk already claimed" : selectedDesk.status === "free" ? "Generate QR display" : "Desk not free"}
                   </Button>
-                  
+                )}
+                
+                {!isStaff && (
                   <Button
                     variant="outline"
                     className="w-full"
@@ -257,20 +259,20 @@ export function MapView() {
                     <ScanLine className="mr-2 h-4 w-4" />
                     {scannerOpen ? "Close scanner" : "Camera scan"}
                   </Button>
+                )}
 
-                  {activeDesk && (
-                    <div className="mt-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800 text-center">
-                      Active desk: <span className="font-semibold">{activeDesk.label}</span>
-                    </div>
-                  )}
+                {activeDesk && (
+                  <div className="mt-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800 text-center">
+                    Active desk: <span className="font-semibold">{activeDesk.label}</span>
+                  </div>
+                )}
 
-                  {scannerOpen && (
-                    <div className="mt-4 overflow-hidden rounded-xl border border-slate-200">
-                      <div id="deskguard-qr-reader" className="w-full" />
-                    </div>
-                  )}
-                </div>
-              )}
+                {scannerOpen && (
+                  <div className="mt-4 overflow-hidden rounded-xl border border-slate-200">
+                    <div id="deskguard-qr-reader" className="w-full" />
+                  </div>
+                )}
+              </div>
             </CardContent>
           )}
         </Card>
