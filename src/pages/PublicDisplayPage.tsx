@@ -145,6 +145,7 @@ function LiveDeskQRCode({
 export function PublicDisplayPage() {
   const { displayPublicId } = useParams<{ displayPublicId: string }>();
   const { now } = useGlobalState();
+  const isIframe = new URLSearchParams(window.location.search).get("iframe") === "1";
 
   const issue = useCallback(async () => {
     if (!displayPublicId) throw new Error("No display ID.");
@@ -159,8 +160,8 @@ export function PublicDisplayPage() {
   const isInvalidProdConfig = import.meta.env.PROD && (publicUrl.includes("localhost") || publicUrl.includes("192.168."));
 
   return (
-    <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-4 sm:p-8">
-      {isInvalidProdConfig && (
+    <div className={`bg-slate-950 flex flex-col items-center justify-center ${isIframe ? 'min-h-0 p-2' : 'min-h-screen p-4 sm:p-8'}`}>
+      {!isIframe && isInvalidProdConfig && (
         <Alert className="mx-auto mb-8 max-w-xl border-amber-500/50 bg-amber-500/10 text-amber-200">
           <AlertTriangle className="h-5 w-5 text-amber-400" />
           <AlertTitle>Production QR configuration is invalid</AlertTitle>
@@ -172,7 +173,7 @@ export function PublicDisplayPage() {
       <LiveDeskQRCode
         now={now}
         kiosk
-        modeLabel="Public Kiosk Display"
+        modeLabel={isIframe ? "Point camera to claim desk" : "Public Kiosk Display"}
         issue={issue}
       />
     </div>

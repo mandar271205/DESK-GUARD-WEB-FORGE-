@@ -223,12 +223,11 @@ async function buildState(auth: AuthedRequest["auth"]) {
   const profilesQuery = isStaff
     ? supabase.from("profiles").select("id,email,full_name,role,citizenship_score").order("full_name")
     : Promise.resolve({ data: [], error: null });
-  const displaysQuery = isStaff
-    ? supabase
-        .from("desk_qr_displays")
-        .select("*, desk:desks(id,code,label,floor,zone,status)")
-        .order("display_name")
-    : Promise.resolve({ data: [], error: null });
+  // All authenticated users get display_public_id so they can navigate to the live kiosk display
+  const displaysQuery = supabase
+    .from("desk_qr_displays")
+    .select(isStaff ? "*, desk:desks(id,code,label,floor,zone,status)" : "id,desk_id,display_public_id,display_name,is_active")
+    .order("display_name");
 
   const [sessionsResult, auditResult, profilesResult, displaysResult] = await Promise.all([
     sessionsQuery,

@@ -1,11 +1,11 @@
 import { useState, useMemo, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, ScanLine, Accessibility, Circle, QrCode, ArrowRight } from "lucide-react";
+import { Search, ScanLine, Accessibility, Circle, QrCode, Monitor, ExternalLink } from "lucide-react";
 import { useGlobalState } from "../contexts/GlobalStateContext";
 import { statusMeta } from "../lib/constants";
 import { displayPublicIdForDesk, extractClaimToken } from "../lib/utils";
 import { FloorMapSvg } from "../components/map/FloorMapSvg";
-import type { DeskStatus, Desk } from "../types";
+import type { DeskStatus } from "../types";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -207,7 +207,7 @@ export function MapView() {
           </CardHeader>
 
           {selectedDesk && (
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-4">
               <div className="flex flex-wrap gap-2">
                 <Badge variant="outline" className="bg-slate-50 text-slate-600">
                   <ScanLine className="mr-1.5 h-3 w-3" />
@@ -227,25 +227,55 @@ export function MapView() {
                 ))}
               </div>
 
-              <div className="rounded-xl border border-indigo-100 bg-indigo-50/50 p-4 flex items-start gap-3">
-                <QrCode className="h-5 w-5 text-indigo-600 mt-0.5" />
-                <div>
-                  <h4 className="text-sm font-semibold text-indigo-900">Live QR Required</h4>
-                  <p className="text-xs text-indigo-700/80 mt-1 leading-relaxed">
-                    Secure claiming requires scanning the live rotating QR code at the desk or kiosk.
+              {/* Live QR Code inline display */}
+              {qrDisplayId ? (
+                <div className="rounded-xl border border-indigo-100 bg-gradient-to-b from-indigo-950 to-slate-900 p-4 flex flex-col items-center gap-3">
+                  <div className="flex items-center justify-between w-full">
+                    <div className="flex items-center gap-2">
+                      <div className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+                      <span className="text-xs font-semibold text-indigo-200">Live Rotating QR</span>
+                    </div>
+                    <button
+                      onClick={() => navigate(`/display/${qrDisplayId}`)}
+                      className="flex items-center gap-1 text-xs text-indigo-300 hover:text-white transition-colors"
+                    >
+                      <Monitor className="h-3 w-3" />
+                      Full kiosk
+                      <ExternalLink className="h-3 w-3" />
+                    </button>
+                  </div>
+                  <iframe
+                    key={qrDisplayId}
+                    src={`/display/${qrDisplayId}?iframe=1`}
+                    className="w-full rounded-lg bg-transparent"
+                    style={{ height: 360, border: 'none', colorScheme: 'dark' }}
+                    title={`Live QR — ${selectedDesk.label}`}
+                  />
+                  <p className="text-center text-xs text-indigo-300/70">
+                    Point your phone camera at this QR code to claim desk <strong className="text-indigo-200">{selectedDesk.label}</strong>
                   </p>
                 </div>
-              </div>
+              ) : (
+                <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 flex items-start gap-3">
+                  <QrCode className="h-5 w-5 text-slate-400 mt-0.5" />
+                  <div>
+                    <h4 className="text-sm font-semibold text-slate-700">No display registered</h4>
+                    <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+                      A librarian needs to register a QR display for this desk.
+                    </p>
+                  </div>
+                </div>
+              )}
 
-              <div className="space-y-3 pt-4 border-t border-slate-100">
+              <div className="space-y-3 pt-2 border-t border-slate-100">
                 {isStaff && (
                   <Button
                     className="w-full bg-indigo-600 hover:bg-indigo-700 shadow-sm"
-                    disabled={!canGenerateDeskQr || !qrDisplayId}
+                    disabled={!qrDisplayId}
                     onClick={() => qrDisplayId && navigate(`/display/${qrDisplayId}`)}
                   >
-                    <QrCode className="mr-2 h-4 w-4" />
-                    {activeDesk ? "Active desk already claimed" : selectedDesk.status === "free" ? "Generate QR display" : "Desk not free"}
+                    <Monitor className="mr-2 h-4 w-4" />
+                    Open kiosk display
                   </Button>
                 )}
                 
@@ -257,7 +287,7 @@ export function MapView() {
                     onClick={() => setScannerOpen((open) => !open)}
                   >
                     <ScanLine className="mr-2 h-4 w-4" />
-                    {scannerOpen ? "Close scanner" : "Camera scan"}
+                    {scannerOpen ? "Close scanner" : "Scan with camera instead"}
                   </Button>
                 )}
 
